@@ -23,27 +23,32 @@ import java.util.Map;
 
 public class FlowdockNotifier extends Notifier {
 
-
     private final String flowToken;
     private final String notificationTags;
-    private final boolean chatNotification;
 
     private final Map<BuildResult, Boolean> notifyMap;
+    private final Map<BuildResult, Boolean> chatMap;
     private final boolean notifySuccess;
     private final boolean notifyFailure;
     private final boolean notifyFixed;
     private final boolean notifyUnstable;
     private final boolean notifyAborted;
     private final boolean notifyNotBuilt;
+    private final boolean chatSuccess;
+    private final boolean chatFailure;
+    private final boolean chatFixed;
+    private final boolean chatUnstable;
+    private final boolean chatAborted;
+    private final boolean chatNotBuilt;
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
-    public FlowdockNotifier(String flowToken, String notificationTags, String chatNotification,
+    public FlowdockNotifier(String flowToken, String notificationTags,
         String notifySuccess, String notifyFailure, String notifyFixed, String notifyUnstable,
-        String notifyAborted, String notifyNotBuilt) {
+        String notifyAborted, String notifyNotBuilt,  String chatSuccess, String chatFailure, String chatFixed, String chatUnstable,
+        String chatAborted, String chatNotBuilt) {
         this.flowToken = flowToken;
         this.notificationTags = notificationTags;
-        this.chatNotification = chatNotification != null && chatNotification.equals("true");
 
         this.notifySuccess = notifySuccess != null && notifySuccess.equals("true");
         this.notifyFailure = notifyFailure != null && notifyFailure.equals("true");
@@ -51,6 +56,13 @@ public class FlowdockNotifier extends Notifier {
         this.notifyUnstable = notifyUnstable != null && notifyUnstable.equals("true");
         this.notifyAborted = notifyAborted != null && notifyAborted.equals("true");
         this.notifyNotBuilt = notifyNotBuilt != null && notifyNotBuilt.equals("true");
+
+        this.chatSuccess = chatSuccess != null && chatSuccess.equals("true");
+        this.chatFailure = chatFailure != null && chatFailure.equals("true");
+        this.chatFixed = chatFixed != null && chatFixed.equals("true");
+        this.chatUnstable = chatUnstable != null && chatUnstable.equals("true");
+        this.chatAborted = chatAborted != null && chatAborted.equals("true");
+        this.chatNotBuilt = chatNotBuilt != null && chatNotBuilt.equals("true");
 
         // set notification map
         this.notifyMap = new HashMap<BuildResult, Boolean>();
@@ -60,6 +72,15 @@ public class FlowdockNotifier extends Notifier {
         this.notifyMap.put(BuildResult.UNSTABLE, this.notifyUnstable);
         this.notifyMap.put(BuildResult.ABORTED, this.notifyAborted);
         this.notifyMap.put(BuildResult.NOT_BUILT, this.notifyNotBuilt);
+
+        // set chat map
+        this.chatMap = new HashMap<BuildResult, Boolean>();
+        this.chatMap.put(BuildResult.SUCCESS, this.chatSuccess);
+        this.chatMap.put(BuildResult.FAILURE, this.chatFailure);
+        this.chatMap.put(BuildResult.FIXED, this.chatFixed);
+        this.chatMap.put(BuildResult.UNSTABLE, this.chatUnstable);
+        this.chatMap.put(BuildResult.ABORTED, this.chatAborted);
+        this.chatMap.put(BuildResult.NOT_BUILT, this.chatNotBuilt);
     }
 
     public String getFlowToken() {
@@ -68,10 +89,6 @@ public class FlowdockNotifier extends Notifier {
 
     public String getNotificationTags() {
         return notificationTags;
-    }
-
-    public boolean getChatNotification() {
-        return chatNotification;
     }
 
     public boolean getNotifySuccess() {
@@ -93,6 +110,25 @@ public class FlowdockNotifier extends Notifier {
         return notifyNotBuilt;
     }
 
+    public boolean getchatSuccess() {
+        return chatSuccess;
+    }
+    public boolean getchatFailure() {
+        return chatFailure;
+    }
+    public boolean getchatFixed() {
+        return chatFixed;
+    }
+    public boolean getchatUnstable() {
+        return chatUnstable;
+    }
+    public boolean getchatAborted() {
+        return chatAborted;
+    }
+    public boolean getchatNotBuilt() {
+        return chatNotBuilt;
+    }
+
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
@@ -110,11 +146,22 @@ public class FlowdockNotifier extends Notifier {
         } else {
             listener.getLogger().println("No Flowdock notification configured for build status: " + buildResult.toString());
         }
+
+        if(shouldChat(buildResult)) {
+            chatFlowdock(build, buildResult, listener);
+        } else {
+            listener.getLogger().println("No Flowdock chat message configured for build status: " + buildResult.toString());
+        }
+
         return true;
     }
 
     public boolean shouldNotify(BuildResult buildResult) {
         return notifyMap.get(buildResult);
+    }
+
+    public boolean shouldChat(BuildResult buildResult) {
+        return chatMap.get(buildResult);
     }
 
     protected void notifyFlowdock(AbstractBuild build, BuildResult buildResult, BuildListener listener) {
@@ -125,17 +172,25 @@ public class FlowdockNotifier extends Notifier {
             msg.setTags(notificationTags);
             api.pushTeamInboxMessage(msg);
             listener.getLogger().println("Flowdock: Team Inbox notification sent successfully");
-
-            if(build.getResult() != Result.SUCCESS && chatNotification) {
-                ChatMessage chatMsg = ChatMessage.fromBuild(build, buildResult);
-                chatMsg.setTags(notificationTags);
-                api.pushChatMessage(chatMsg);
-                logger.println("Flowdock: Chat notification sent successfully");
-            }
         } catch(FlowdockException ex) {
             logger.println("Flowdock: failed to send notification");
             logger.println("Flowdock: " + ex.getMessage());
         }
+    }
+
+    protected void chatFlowdock(AbstractBuild build, BuildResult buildResult, BuildListener listener) {
+        PrintStream logger = listener.getLogger();
+        try {
+            FlowdockAPI api = new FlowdockAPI(getDescriptor().apiUrl(), flowToken);
+            ChatMessage msg = ChatMessage.fromBuild(build, buildResult);
+            msg.setTags(notificationTags);
+            api.pushChatMessage(msg);
+            listener.getLogger().println("Flowdock: Chat notification sent successfully");
+        } catch(FlowdockException ex) {
+            logger.println("Flowdock: failed to send chat notification");
+            logger.println("Flowdock: " + ex.getMessage());
+        }
+
     }
 
     @Override
