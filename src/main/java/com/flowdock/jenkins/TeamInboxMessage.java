@@ -16,8 +16,9 @@ public class TeamInboxMessage extends FlowdockMessage {
         notification based on the build status. You can also setup your own email
         addresses and configure custom Gravatar icons for them.
     */
-    public static final String FLOWDOCK_BUILD_OK_EMAIL = "build+ok@flowdock.com";
-    public static final String FLOWDOCK_BUILD_FAIL_EMAIL = "build+fail@flowdock.com";
+    public static final String FLOWDOCK_BUILD_OK_EMAIL = "josh+buildsuccess@shopify.com";
+    public static final String FLOWDOCK_BUILD_UNSTABLE_EMAIL = "josh+buildunstable@shopify.com";
+    public static final String FLOWDOCK_BUILD_FAIL_EMAIL = "josh+buildfailed@shopify.com";
 
     protected String source;
     protected String project;
@@ -79,8 +80,12 @@ public class TeamInboxMessage extends FlowdockMessage {
         String buildLink = (rootUrl == null) ? null : rootUrl + build.getUrl();
         if(buildLink != null) msg.setLink(buildLink);
 
-        if(build.getResult().isWorseThan(Result.SUCCESS))
+        if (build.getResult().isWorseThan(Result.UNSTABLE)) {
             msg.setFromAddress(FLOWDOCK_BUILD_FAIL_EMAIL);
+        }
+        else if (build.getResult().isWorseThan(Result.SUCCESS)) {
+            msg.setFromAddress(FLOWDOCK_BUILD_UNSTABLE_EMAIL);
+        }
 
         StringBuffer content = new StringBuffer();
         content.append("<h2>").append(build.getProject().getName()).append("</h2>");
