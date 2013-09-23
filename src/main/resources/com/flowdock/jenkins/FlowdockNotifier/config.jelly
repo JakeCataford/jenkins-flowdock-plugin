@@ -37,25 +37,25 @@
         </f:entry>
       </f:section>
 
-      <f:section title="chat notifications for the following build statuses">
-              <f:entry title="Success" field="chatSuccess">
-                <f:checkbox default="false" value="true" />
-              </f:entry>
-              <f:entry title="Failure" field="chatFailure">
-                <f:checkbox default="true" value="true" />
-              </f:entry>
-              <f:entry title="Fixed" field="chatFixed">
-                <f:checkbox default="true" value="true" />
-              </f:entry>
-              <f:entry title="Unstable" field="chatUnstable">
-                <f:checkbox value="true" />
-              </f:entry>
-              <f:entry title="Aborted" field="chatAborted">
-                <f:checkbox value="true" />
-              </f:entry>
-              <f:entry title="Not built" field="chatNotBuilt">
-                <f:checkbox value="true" />
-              </f:entry>
+      <f:section title="Chat notifications for the following build statuses">
+        <f:entry title="Success" field="chatSuccess">
+          <f:checkbox default="false" value="true" />
+        </f:entry>
+        <f:entry title="Failure" field="chatFailure">
+          <f:checkbox default="true" value="true" />
+        </f:entry>
+        <f:entry title="Fixed" field="chatFixed">
+          <f:checkbox default="true" value="true" />
+        </f:entry>
+        <f:entry title="Unstable" field="chatUnstable">
+          <f:checkbox value="true" />
+        </f:entry>
+        <f:entry title="Aborted" field="chatAborted">
+          <f:checkbox value="true" />
+        </f:entry>
+        <f:entry title="Not built" field="chatNotBuilt">
+          <f:checkbox value="true" />
+        </f:entry>
       </f:section>
 
     </table>
