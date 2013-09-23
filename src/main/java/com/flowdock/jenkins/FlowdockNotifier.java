@@ -126,12 +126,13 @@ public class FlowdockNotifier extends Notifier {
             api.pushTeamInboxMessage(msg);
             listener.getLogger().println("Flowdock: Team Inbox notification sent successfully");
 
-            if(build.getResult() != Result.SUCCESS && chatNotification) {
+            if(chatNotification) {
                 ChatMessage chatMsg = ChatMessage.fromBuild(build, buildResult);
                 chatMsg.setTags(notificationTags);
                 api.pushChatMessage(chatMsg);
                 logger.println("Flowdock: Chat notification sent successfully");
             }
+
         } catch(FlowdockException ex) {
             logger.println("Flowdock: failed to send notification");
             logger.println("Flowdock: " + ex.getMessage());
@@ -162,7 +163,7 @@ public class FlowdockNotifier extends Notifier {
                 FlowdockAPI api = new FlowdockAPI(apiUrl(), flowToken);
                 ChatMessage testMsg = new ChatMessage();
                 testMsg.setTags(notificationTags);
-                testMsg.setContent("Your plugin is ready!");
+                testMsg.setContent("yup.");
                 api.pushChatMessage(testMsg);
                 return FormValidation.ok("Success! Flowdock plugin can send notifications to your flow.");
             } catch(FlowdockException ex) {
