@@ -16,11 +16,7 @@
          title="Test connection with Chat notification" progress="Sending..."
          method="testConnection" with="flowToken,notificationTags" />
 
-      <f:entry title="Chat notification when build fails" field="chatNotification">
-        <f:checkbox />
-      </f:entry>
-
-      <f:section title="Notify with following build statuses">
+      <f:section title="Sidebar notifications for the following build statuses">
         <f:entry title="Success" field="notifySuccess">
           <f:checkbox default="true" value="true" />
         </f:entry>
@@ -39,6 +35,27 @@
         <f:entry title="Not built" field="notifyNotBuilt">
           <f:checkbox value="true" />
         </f:entry>
+      </f:section>
+
+      <f:section title="chat notifications for the following build statuses">
+              <f:entry title="Success" field="chatSuccess">
+                <f:checkbox default="false" value="true" />
+              </f:entry>
+              <f:entry title="Failure" field="chatFailure">
+                <f:checkbox default="true" value="true" />
+              </f:entry>
+              <f:entry title="Fixed" field="chatFixed">
+                <f:checkbox default="true" value="true" />
+              </f:entry>
+              <f:entry title="Unstable" field="chatUnstable">
+                <f:checkbox value="true" />
+              </f:entry>
+              <f:entry title="Aborted" field="chatAborted">
+                <f:checkbox value="true" />
+              </f:entry>
+              <f:entry title="Not built" field="chatNotBuilt">
+                <f:checkbox value="true" />
+              </f:entry>
       </f:section>
 
     </table>
