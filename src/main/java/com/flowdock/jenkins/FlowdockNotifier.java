@@ -163,7 +163,7 @@ public class FlowdockNotifier extends Notifier {
                 FlowdockAPI api = new FlowdockAPI(apiUrl(), flowToken);
                 ChatMessage testMsg = new ChatMessage();
                 testMsg.setTags(notificationTags);
-                testMsg.setContent("yup.");
+                testMsg.setContent("Your plugin is ready!");
                 api.pushChatMessage(testMsg);
                 return FormValidation.ok("Success! Flowdock plugin can send notifications to your flow.");
             } catch(FlowdockException ex) {
