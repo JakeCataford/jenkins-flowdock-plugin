@@ -141,16 +141,25 @@ public class FlowdockNotifier extends Notifier {
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
         BuildResult buildResult = BuildResult.fromBuild(build);
-        if(shouldNotify(buildResult)) {
-            notifyFlowdock(build, buildResult, listener);
-        } else {
-            listener.getLogger().println("No Flowdock notification configured for build status: " + buildResult.toString());
+
+        try {
+            if(shouldNotify(buildResult)) {
+                notifyFlowdock(build, buildResult, listener);
+            } else {
+                listener.getLogger().println("No Flowdock notification configured for build status: " + buildResult.toString());
+            }
+        } catch (Exception e) {
+            listener.getLogger().println("Couldn't get build result settings for sidebar. Continuing as if nothing ever happened....");
         }
 
-        if(shouldChat(buildResult)) {
-            chatFlowdock(build, buildResult, listener);
-        } else {
-            listener.getLogger().println("No Flowdock chat message configured for build status: " + buildResult.toString());
+        try {
+            if(shouldChat(buildResult)) {
+                chatFlowdock(build, buildResult, listener);
+            } else {
+                listener.getLogger().println("No Flowdock chat message configured for build status: " + buildResult.toString());
+            }
+        } catch (Exception e) {
+            listener.getLogger().println("Couldn't get build result settings for chat. Continuing as if nothing ever happened....");
         }
 
         return true;
